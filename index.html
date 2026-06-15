@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>韩语语法大冒险 - 随机测验版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .status-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-item {
+            text-align: center;
+        }
+
+        .status-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .status-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            min-height: 500px;
+        }
+
+        .home-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .home-screen h2 {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            max-width: 600px;
+            margin: 30px auto;
+        }
+
+        .stat-card {
+            padding: 30px;
+            border-radius: 15px;
+            color: white;
+        }
+
+        .stat-card.purple {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .stat-card.pink {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .stat-card.blue {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .quiz-screen {
+            display: none;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        .question-number {
+            font-size: 0.9em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-btn {
+            padding: 18px 25px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+        }
+
+        .result-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(#667eea var(--score), #e0e0e0 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .score-inner {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .score-label {
+            color: #666;
+        }
+
+        .result-message {
+            font-size: 1.5em;
+            margin: 20px 0;
+        }
+
+        .excellent {
+            color: #28a745;
+        }
+
+        .good {
+            color: #17a2b8;
+        }
+
+        .average {
+            color: #ffc107;
+        }
+
+        .need-practice {
+            color: #dc3545;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-large {
+            font-size: 1.3em;
+            padding: 20px 60px;
+            margin-top: 30px;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .feedback.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.5s ease;
+        }
+
+        .explanation-box {
+            background: #fff3cd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .explanation-box.show {
+            display: block;
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🇰🇷 韩语语法随机测验</h1>
+            <p>每次随机出题，无限刷题！</p>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-label">模式</div>
+                <div class="status-value" id="currentLevel">随机</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">本次得分</div>
+                <div class="status-value" id="totalScore">0</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">总正确率</div>
+                <div class="status-value" id="accuracy">0%</div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <!-- 首页 -->
+            <div id="homeScreen" class="home-screen"></div>
+
+            <!-- 测验界面 -->
+            <div id="quizScreen" class="quiz-screen">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div class="question-card">
+                    <div class="question-number" id="questionNumber">题目 1 / 10</div>
+                    <div class="question-text" id="questionText"></div>
+                    <div class="options" id="options"></div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="explanation-box" id="explanationBox">
+                        <div class="explanation-title">💡 语法解析</div>
+                        <div id="explanationText"></div>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="goHome()">返回首页</button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" style="display: none;">下一题
+                        →</button>
+                </div>
+            </div>
+
+            <!-- 结果界面 -->
+            <div id="resultScreen" class="result-screen">
+                <div class="score-circle" id="scoreCircle" style="--score: 0deg;">
+                    <div class="score-inner">
+                        <div class="score-number" id="finalScore">0</div>
+                        <div class="score-label">得分</div>
+                    </div>
+                </div>
+                <div class="result-message" id="resultMessage"></div>
+                <p style="color: #666; margin-bottom: 20px;" id="resultDetail"></p>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="goHome()">返回首页</button>
+                    <button class="btn btn-success" onclick="startRandomQuiz()">再来一次 🔄</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====================== 📚 题库区 - 在这里添加新题目 ======================
+        const questionBank = [
+            // ===== 主题助词 은/는 =====
+            {
+                question: "나 ___ 학생입니다.",
+                options: ["은", "는", "이", "가"],
+                answer: 1,
+                explanation: "나（我）以元音ㅏ结尾，所以使用는。正确：나는 학생입니다."
+            },
+            {
+                question: "한국 ___ 아름다워요.",
+                options: ["은", "는", "을", "를"],
+                answer: 0,
+                explanation: "한국（韩国）以辅音ㄱ结尾，所以使用은。正确：한국은 아름다워요."
+            },
+            {
+                question: "음식 ___ 맛있어요.",
+                options: ["는", "은", "이", "가"],
+                answer: 1,
+                explanation: "음식（食物）以辅音ㄱ结尾，所以使用은。正确：음식은 맛있어요."
+            },
+
+            // ===== 主格助词 이/가 =====
+            {
+                question: "누구 ___ 왔어요?",
+                options: ["은", "는", "이", "가"],
+                answer: 3,
+                explanation: "누구（谁）以元音ㅜ结尾，所以使用가。正确：누구가 왔어요?"
+            },
+            {
+                question: "꽃 ___ 예뻐요.",
+                options: ["이", "가", "은", "는"],
+                answer: 0,
+                explanation: "꽃（花）以辅音ㅊ结尾，所以使用이。正确：꽃이 예뻐요."
+            },
+            {
+                question: "집 ___ 크다.",
+                options: ["이", "가", "는", "을"],
+                answer: 0,
+                explanation: "집（家）以辅音ㅂ结尾，所以使用이。正确：집이 크다."
+            },
+
+            // ===== 宾格助词 을/를 =====
+            {
+                question: "사과 ___ 먹어요.",
+                options: ["을", "를", "이", "가"],
+                answer: 0,
+                explanation: "사과（苹果）以辅音ㄹ结尾，所以使用을。正确：사과를 먹어요."
+            },
+            {
+                question: "영화 ___ 봐요.",
+                options: ["을", "를", "은", "는"],
+                answer: 1,
+                explanation: "영화（电影）以元音ㅘ结尾，所以使用를。正确：영화를 봐요."
+            },
+
+            // ===== 现在时态 아/어요 =====
+            {
+                question: "가다의 올바른 현재형은?",
+                options: ["가아요", "가요", "가어요", "갸요"],
+                answer: 1,
+                explanation: "가다词干가的元音是ㅏ，所以+아요→가요。"
+            },
+            {
+                question: "먹다 → ___",
+                options: ["먹아요", "먹어요", "먹혀요", "먹요"],
+                answer: 1,
+                explanation: "먹다词干먹的元音是ㅓ，所以+어요→먹어요。"
+            },
+            {
+                question: "하다의 현재형은?",
+                options: ["하여요", "하요", "해요", "하아요"],
+                answer: 2,
+                explanation: "하다是特殊变化，现在时是해요。"
+            },
+
+            // ===== 过去时态 았/었어요 =====
+            {
+                question: "가다의 과거형은?",
+                options: ["가았어요", "갔어요", "가었어요", "갸었어요"],
+                answer: 1,
+                explanation: "가다词干가的元音是ㅏ，所以+았어요→갔어요。"
+            },
+            {
+                question: "하다의 과거형은?",
+                options: ["하였어요", "했어요", "하았어요", "하였요"],
+                answer: 1,
+                explanation: "하다是特殊变化，过去时是했어요。"
+            },
+
+            // ===== 이/가 vs 은/는 辨析 =====
+            {
+                question: "\"누___ 왔어요?\" 正确填空：",
+                options: ["은", "는", "이", "가"],
+                answer: 3,
+                explanation: "问\"谁\"的时候，强调主语是谁，用가。正确：누가 왔어요?"
+            },
+            {
+                question: "저 ___ 학생입니다. 介绍自己时用：",
+                options: ["이", "가", "는", "을"],
+                answer: 2,
+                explanation: "介绍自己的身份，用主题助词는。正确：저는 학생입니다."
+            },
+
+            // ===== 이/가 固定搭配 있다/없다/아니다 =====
+            {
+                question: "나는 돈 ___ 없어요.",
+                options: ["은", "는", "이", "가"],
+                answer: 2,
+                explanation: "없다前面必须用이/가。돈有辅音ㄷ结尾→이。正确：돈이 없어요."
+            },
+            {
+                question: "한국 친구 ___ 있어요.",
+                options: ["이", "가", "은", "는"],
+                answer: 1,
+                explanation: "있다前面必须用이/가。친구以元音结尾→가。正确：친구가 있어요."
+            },
+            {
+                question: "저는 학생 ___ 아니에요.",
+                options: ["는", "은", "이", "가"],
+                answer: 2,
+                explanation: "아니다前面必须用이/가。正确：학생이 아니에요."
+            },
+            // ===== 이/가 되다 成为句型 =====
+            {
+                question: "나는 의사 ___ 되고 싶어요.",
+                options: ["이", "가", "은", "는"],
+                answer: 1,
+                explanation: "되다（成为）前面用이/가。의사以元音ㅏ结尾→가。正确：의사가 되고 싶어요."
+            },
+            {
+                question: "선생님 ___ 되었어요.",
+                options: ["는", "은", "이", "가"],
+                answer: 2,
+                explanation: "되다前面用이/가。선생님有辅音ㅁ结尾→이。正确：선생님이 되었어요."
+            },
+            {
+                question: "좋은 사람 ___ 되고 싶어요.",
+                options: ["이", "가", "은", "는"],
+                answer: 0,
+                explanation: "되다前面用이/가。사람有辅音ㅁ结尾→이。正确：사람이 되고 싶어요."
+            },
+            {
+                question: "행복한 부부 ___ 되었어요.",
+                options: ["이", "가", "을", "를"],
+                answer: 1,
+                explanation: "되다前面用이/가。부부以元音ㅜ结尾→가。正确：부부가 되었어요."
+            },
+            {
+                question: "다음 중 올바른 것은?",
+                options: ["나는 의사는 되고 싶다", "나는 의사가 되고 싶다", "나는 의사을 되고 싶다", "나는 의사를 되고 싶다"],
+                answer: 1,
+                explanation: "되다前面必须用이/가。正确：나는 의사가 되고 싶다."
+            },
+            // ===== 이/가 아니다 否定句型 =====
+            {
+                question: "나는 학생 ___ 아니에요.",
+                options: ["는", "은", "이", "가"],
+                answer: 2,
+                explanation: "아니다（不是）前面必须用이/가。학생有辅音ㅇ结尾→이。正确：학생이 아니에요."
+            },
+            {
+                question: "저는 선생님 ___ 아닙니다.",
+                options: ["이", "가", "은", "는"],
+                answer: 0,
+                explanation: "아니다前面用이/가。선생님有辅音ㅁ结尾→이。正确：선생님이 아닙니다."
+            },
+            {
+                question: "이것은 사과 ___ 아니에요.",
+                options: ["는", "가", "이", "을"],
+                answer: 2,
+                explanation: "아니다前面用이/가。사과有辅音ㄱ结尾→이。正确：사과가 아니에요?"
+            },
+            {
+                question: "그 사람은 한국인 ___ 아니에요.",
+                options: ["은", "는", "이", "가"],
+                answer: 2,
+                explanation: "아니다前面用이/가。한국인有辅音ㄴ结尾→이。正确：한국인이 아니에요."
+            },
+            {
+                question: "다음 중 틀린 문장은?",
+                options: ["나는 학생이 아니다", "저는 의사가 아니다", "나는 학생는 아니다", "이것은 책이 아니다"],
+                answer: 2,
+                explanation: "아니다前面必须用이/가，不能用는。正确应该是：학생이 아니다."
+            },
+            {
+                question: "오늘은 월요일 ___ 아니에요.",
+                options: ["은", "는", "이", "가"],
+                answer: 2,
+                explanation: "아니다前面用이/가。월요일有 consonant ㄹ结尾→이。正确：월요일이 아니에요."
+            }
+            // 👉 在这里继续添加新题目，格式参考上面 ↑
+        ];
+
+        // ====================== 🎮 游戏逻辑区（无需修改） ======================
+        let gameState = {
+            currentQuestion: 0,
+            quizScore: 0,
+            totalQuestions: 0,
+            correctAnswers: 0,
+            quizQuestions: [],
+            quizLength: 10
+        };
+
+        // 随机打乱
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // 更新状态栏
+        function updateStatus() {
+            document.getElementById('totalScore').textContent = gameState.quizScore;
+            const accuracy = gameState.totalQuestions > 0
+                ? Math.round((gameState.correctAnswers / gameState.totalQuestions) * 100)
+                : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+
+        // 初始化首页
+        function initHome() {
+            document.getElementById('homeScreen').style.display = 'block';
+            document.getElementById('quizScreen').style.display = 'none';
+            document.getElementById('resultScreen').style.display = 'none';
+
+            document.getElementById('homeScreen').innerHTML = `
+                <h2>🎲 随机出题模式</h2>
+                <p style="color: #666; margin-bottom: 30px; font-size: 1.2em;">
+                    每次从题库随机抽取10道题，无限刷题！
+                </p>
+                <div class="stats-grid">
+                    <div class="stat-card purple">
+                        <div class="stat-number">${questionBank.length}</div>
+                        <div>题库总量</div>
+                    </div>
+                    <div class="stat-card pink">
+                        <div class="stat-number">10</div>
+                        <div>每题题量</div>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-number">7+</div>
+                        <div>语法类型</div>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-large" onclick="startRandomQuiz()">
+                    🚀 开始测验
+                </button>
+            `;
+        }
+
+        // 开始随机测验
+        function startRandomQuiz() {
+            gameState.currentQuestion = 0;
+            gameState.quizScore = 0;
+            gameState.quizQuestions = shuffleArray(questionBank).slice(0, gameState.quizLength);
+            showQuizScreen();
+        }
+
+        function showQuizScreen() {
+            document.getElementById('homeScreen').style.display = 'none';
+            document.getElementById('quizScreen').style.display = 'block';
+            document.getElementById('resultScreen').style.display = 'none';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const quiz = gameState.quizQuestions[gameState.currentQuestion];
+            document.getElementById('questionNumber').textContent = `题目 ${gameState.currentQuestion + 1} / ${gameState.quizLength}`;
+            document.getElementById('questionText').textContent = quiz.question;
+            document.getElementById('progressFill').style.width = `${((gameState.currentQuestion) / gameState.quizLength) * 100}%`;
+
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            quiz.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = `${String.fromCharCode(65 + index)}. ${option}`;
+                btn.onclick = () => selectAnswer(index, quiz.answer, quiz.explanation);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('explanationBox').classList.remove('show');
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function selectAnswer(selected, correct, explanation) {
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            gameState.totalQuestions++;
+
+            const feedback = document.getElementById('feedback');
+            if (selected === correct) {
+                buttons[selected].classList.add('correct');
+                feedback.className = 'feedback correct';
+                feedback.textContent = '🎉 回答正确！';
+                gameState.quizScore += 10;
+                gameState.correctAnswers++;
+            } else {
+                buttons[selected].classList.add('wrong');
+                buttons[correct].classList.add('correct');
+                feedback.className = 'feedback wrong';
+                feedback.textContent = '❌ 回答错误';
+            }
+
+            document.getElementById('explanationText').textContent = explanation;
+            document.getElementById('explanationBox').classList.add('show');
+            document.getElementById('nextBtn').style.display = 'block';
+            updateStatus();
+        }
+
+        function nextQuestion() {
+            gameState.currentQuestion++;
+            if (gameState.currentQuestion >= gameState.quizLength) {
+                showResult();
+            } else {
+                showQuestion();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quizScreen').style.display = 'none';
+            document.getElementById('resultScreen').style.display = 'block';
+
+            const score = gameState.quizScore;
+            const scoreDeg = (score / 100) * 360;
+            document.getElementById('scoreCircle').style.setProperty('--score', `${scoreDeg}deg`);
+            document.getElementById('finalScore').textContent = score;
+
+            let message, messageClass, detail;
+            if (score >= 90) {
+                message = '🌟 完美！韩语语法大师！';
+                messageClass = 'excellent';
+                detail = '你已经完全掌握了这些语法点！';
+            } else if (score >= 70) {
+                message = '👍 做得不错！继续加油！';
+                messageClass = 'good';
+                detail = '大部分都掌握了，错题再复习一下。';
+            } else if (score >= 50) {
+                message = '💪 还需要多多练习哦！';
+                messageClass = 'average';
+                detail = '建议再巩固一下语法要点。';
+            } else {
+                message = '📚 需要加强学习！';
+                messageClass = 'need-practice';
+                detail = '请仔细复习语法规则，然后再挑战吧！';
+            }
+
+            document.getElementById('resultMessage').textContent = message;
+            document.getElementById('resultMessage').className = `result-message ${messageClass}`;
+            document.getElementById('resultDetail').textContent = detail;
+            updateStatus();
+        }
+
+        function goHome() {
+            initHome();
+        }
+
+        // 初始化
+        window.onload = function () {
+            initHome();
+            updateStatus();
+        };
+    </script>
+</body>
+
+</html>
